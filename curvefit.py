@@ -93,7 +93,9 @@ def hist_gaussian(x, mu, sig):
     return np.power(2 * np.pi , -0.5)*np.exp(-np.power(x - mu , 2.) / (2 * np.power(sig, 2.)))/sig
 
 def poisson(x, mu):
-    return np.power(mu , x)/gamma(x+1)*np.exp(-mu)
+    sig=40
+    return np.power(2 * np.pi , -0.5)*np.exp(-np.power(x - mu , 2.) / (2 * np.power(sig, 2.)))/sig
+    #return np.power(mu , x)/gamma(x+1.)*np.exp(-mu)
 
 def gaussian_fitting(entries):
     entries = np.array(entries)
@@ -149,6 +151,7 @@ def hist_gaussian_fitting(name, data, half_width = 20, shift = 0,VERBOSE = 0):
         plt.plot(x_plot, hist_gaussian(x_plot, paras[0], paras[1]), 'r-', lw= 2)
         axes = plt.gca()
         axes.set_xlim([index_max-half_width+shift, index_max+half_width+shift])
+	plt.title(r'Histogram: $\mu={0}$, $\sigma={1}$'.format(paras[0],paras[1]))
         fig.show()
 	input()
     return paras, cov
@@ -183,8 +186,6 @@ def poisson_fitting(name, data, half_width = 20, shift = 0, VERBOSE = 0):
     if VERBOSE>2:print moments
     # fit 
     paras, cov = optimize.curve_fit(poisson, bin_middles, numbers, p0 = moments)
-    paras=paras.tolist()
-    paras.append(paras[0]**-0.5)
     if VERBOSE>0:
         print "paras: ", paras
         print "cov: \n", cov
@@ -194,6 +195,7 @@ def poisson_fitting(name, data, half_width = 20, shift = 0, VERBOSE = 0):
         plt.plot(x_plot, poisson(x_plot, paras[0]), 'r-', lw= 2)
         axes = plt.gca()
         axes.set_xlim([index_max-half_width+shift, index_max+half_width+shift])
+	plt.title(r'Histogram: $\mu={0}$, $\sigma={1}$'.format(paras[0],paras[0]**0.5))
         fig.show()
 	input()
     return paras, cov
